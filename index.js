@@ -7,7 +7,7 @@ var EMBERJS = fs.readFileSync(__dirname + '/vendor/ember-1.0.0-rc.1.min.js', 'ut
 
 module.exports = function(file, basePath) {
   //dummy jQuery
-  var jQuery = function() {
+  /*var jQuery = function() {
       return jQuery;
     };
   jQuery.ready = function() {
@@ -65,7 +65,19 @@ module.exports = function(file, basePath) {
   vm.runInContext(EMBERJS, context, 'ember.js');
 
   // compile the handlebars template inside the vm context
-  vm.runInContext('templatejs = Ember.Handlebars.precompile(template).toString()', context);
+  vm.runInContext('templatejs = Ember.Handlebars.precompile(template).toString()', context);*/
+
+  var context = vm.createContext({
+    exports: {},
+    template: fs.readFileSync(file, 'utf8')
+  });
+
+  // Load the ember template compiler.
+  vm.runInContext(HANDLEBARSJS, context, 'ember-precompiler.js');
+  vm.runInContext(EMBERJS, context, 'ember-precompiler.js');
+
+  // Compile the template.
+  vm.runInContext('templatejs = Ember.Handlebars.precompile(template);', context);
 
   // extract the compiled template from the vm context and return it,
   // adding template to Ember.TEMPLATES when it is required
