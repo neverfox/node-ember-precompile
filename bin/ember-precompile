@@ -9,7 +9,8 @@ var usage = '\n  \
 Precompile handlebar templates for Ember.js.\n  \
 Usage: ' + argv.$0 + ' template...\n\n  \
 Options:\n  \
--f, --output   Output File\n'
+-f, --output   Output File\n \
+-b, --basePath   Base Path stripped from full path\n'
 
 function main(){
   if ((argv.h)||(argv.help)) {
@@ -18,6 +19,7 @@ function main(){
   }
   var inputFiles = argv._;
   var outputFile = argv.output || argv.f;
+
   if (outputFile) {
     // create a blank output file
     fs.writeFileSync(outputFile, '', 'utf8');
@@ -28,8 +30,11 @@ function main(){
   else {
     var write = console.log;
   }
+
+  var basePath = argv.basePath || argv.b;
+  if (!basePath) basePath = '';
   inputFiles.forEach(function(fileName){
-    write(compileEmberTemplate(fileName));
+    write(compileEmberTemplate(fileName, basePath));
   });
 }
 
